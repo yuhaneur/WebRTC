@@ -9,6 +9,7 @@ const mediaStreamConstraints = {
 };
 
 // Set up to exchange only video.
+// 비디오 스트림 수신하겠다 ( 1 )
 const offerOptions = {
   offerToReceiveVideo: 1,
 };
@@ -31,9 +32,12 @@ let remotePeerConnection;
 
 // Sets the MediaStream as the video element src.
 function gotLocalMediaStream(mediaStream) {
+	// 속성 설정
   localVideo.srcObject = mediaStream;
   localStream = mediaStream;
+// 콘솔에 메시지 입력,  메시지 입력한 시간도 표시
   trace('Received local stream.');
+// 콜버튼 비활성화
   callButton.disabled = false;  // Enable call button.
 }
 
@@ -43,7 +47,9 @@ function handleLocalMediaStreamError(error) {
 }
 
 // Handles remote MediaStream success by adding it as the remoteVideo src.
+// 상대방이 스트림을 추가했을때 발생 ( 원격 스트림에대한 정보)
 function gotRemoteMediaStream(event) {
+// 상대방의 스트림속성을 미디어 스트림이라는 변수에 담는다.
   const mediaStream = event.stream;
   remoteVideo.srcObject = mediaStream;
   remoteStream = mediaStream;
@@ -66,6 +72,7 @@ function logResizedVideo(event) {
   logVideoLoaded(event);
 
   if (startTime) {
+	//window.performance.now() 코드의 실행시간 측정
     const elapsedTime = window.performance.now() - startTime;
     startTime = null;
     trace(`Setup time: ${elapsedTime.toFixed(3)}ms.`);
@@ -83,7 +90,7 @@ remoteVideo.addEventListener('onresize', logResizedVideo);
 function handleConnection(event) {
   const peerConnection = event.target;
   const iceCandidate = event.candidate;
-
+// ICE : 유저들을 브라우저 간 연결 할 네트워크 인터페이스와 포트 정보를 가지고있음.
   if (iceCandidate) {
     const newIceCandidate = new RTCIceCandidate(iceCandidate);
     const otherPeer = getOtherPeer(peerConnection);
