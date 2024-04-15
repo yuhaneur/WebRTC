@@ -89,14 +89,17 @@ remoteVideo.addEventListener('onresize', logResizedVideo);
 // Connects with new peer candidate.
 function handleConnection(event) {
   const peerConnection = event.target;
+// candidate 속성을 가져온다.
   const iceCandidate = event.candidate;
 // ICE : 유저들을 브라우저 간 연결 할 네트워크 인터페이스와 포트 정보를 가지고있음.
   if (iceCandidate) {
+	// 새로운 iceCandidate 객체 생성하는데 iceCandidate를 담아서 생성을해 ?
     const newIceCandidate = new RTCIceCandidate(iceCandidate);
     const otherPeer = getOtherPeer(peerConnection);
-
+	// 다른 유저 피어에 ice정보를 생성해줌
     otherPeer.addIceCandidate(newIceCandidate)
       .then(() => {
+	// 생성 성공하면 로그찍히는 콜백함수 호출
         handleConnectionSuccess(peerConnection);
       }).catch((error) => {
         handleConnectionFailure(peerConnection, error);
