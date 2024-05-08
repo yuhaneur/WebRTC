@@ -18,7 +18,9 @@ const offerOptions = {
 let startTime = null;
 
 // Define peer connections, streams and video elements.
+// 내 비디오
 const localVideo = document.getElementById('localVideo');
+//원격 비디오
 const remoteVideo = document.getElementById('remoteVideo');
 
 let localStream;
@@ -31,6 +33,10 @@ let remotePeerConnection;
 // Define MediaStreams callbacks.
 
 // Sets the MediaStream as the video element src.
+
+// 미디어스트림 가져오는데 성공했을때 실행 되는 함수
+//mediaStream 은 navigator.mediaDevices.getUserMedia(mediaStreamConstraints)
+// 이 함수가 실행되서 가져온 데이터이다.
 function gotLocalMediaStream(mediaStream) {
 	// 속성 설정
   localVideo.srcObject = mediaStream;
@@ -78,7 +84,8 @@ function logResizedVideo(event) {
     trace(`Setup time: ${elapsedTime.toFixed(3)}ms.`);
   }
 }
-
+// loadedmetadata : 비디오 요소에 메타데이터가 로드되었을때
+// onresize : 비디오 요소의 크기가 변경될때 (화면조정)
 localVideo.addEventListener('loadedmetadata', logVideoLoaded);
 remoteVideo.addEventListener('loadedmetadata', logVideoLoaded);
 remoteVideo.addEventListener('onresize', logResizedVideo);
@@ -203,7 +210,9 @@ hangupButton.disabled = true;
 
 
 // Handles start button action: creates local MediaStream.
+// start 버튼 눌렀을때
 function startAction() {
+	// 스타트버튼 비활성화
   startButton.disabled = true;
   navigator.mediaDevices.getUserMedia(mediaStreamConstraints)
     .then(gotLocalMediaStream).catch(handleLocalMediaStreamError);
@@ -212,10 +221,13 @@ function startAction() {
 
 // Handles call button action: creates peer connection.
 function callAction() {
+	// 콜 버튼 비활성화
   callButton.disabled = true;
+	// 통화종료 버튼 활성화
   hangupButton.disabled = false;
-
+// 로그 찍기
   trace('Starting call.');
+// 통화시작시간 
   startTime = window.performance.now();
 
   // Get local media stream tracks.
@@ -231,6 +243,8 @@ function callAction() {
   const servers = null;  // Allows for RTC server configuration.
 
   // Create peer connections and add behavior.
+	//iceconnectionstatechange : ICE 연결상태가 변결될때 발생되는 이벤트
+	// ICE : 피어간의 연결을 설정하는데 사용되는 네트워크 주소와 포트의 집합.
   localPeerConnection = new RTCPeerConnection(servers);
   trace('Created local peer connection object localPeerConnection.');
 
@@ -256,12 +270,15 @@ function callAction() {
 }
 
 // Handles hangup action: ends up call, closes connections and resets peers.
+// 연결끊기 버튼 눌렀을떄 실행되는 함수
 function hangupAction() {
   localPeerConnection.close();
   remotePeerConnection.close();
   localPeerConnection = null;
   remotePeerConnection = null;
+// 끊기버튼 비활성화
   hangupButton.disabled = true;
+// 콜버튼 활성화
   callButton.disabled = false;
   trace('Ending call.');
 }
